@@ -1,0 +1,54 @@
+<div class="container center" cdkDropListGroup>
+  <h2>Routes</h2>
+  <div class="center align-top">
+  @for (item of routes$(); track item.routeId) {
+    <section>
+      <h3>Rider: {{getRiderNameFromId(item.driverId)}}</h3>
+      <div
+        cdkDropList
+        #routeList{{item.routeId}}="cdkDropList"
+        [cdkDropListData]="item.productsToDeliver"
+        class="center container example-list"
+        (cdkDropListDropped)="drop($event)">
+        @for (product of item.productsToDeliver; track $index) {
+          <div class="max-width" cdkDrag>
+            <mat-card class="example-card">
+              <mat-card-header>
+                <mat-card-title-group>
+                  <mat-card-title>{{getOrderNameFromId(product.orderId)}}</mat-card-title>
+                  <mat-card-subtitle>ID: {{product.orderId}}</mat-card-subtitle>
+                </mat-card-title-group>
+              </mat-card-header>
+            </mat-card>
+          </div>
+        }
+      </div>
+    </section>
+  }
+  </div>
+</div>
+
+<br>
+<div class="center">
+  <div class="blocks">
+    <button type="button" mat-raised-button color="primary" (click)="saveRoutes()">
+      <mat-icon>update</mat-icon> Save
+    </button>
+  </div>
+</div>
+
+<!--<div class="example-container">
+  <h2>Done</h2>
+
+  <div
+    cdkDropList
+    #doneList="cdkDropList"
+    [cdkDropListData]="done"
+    [cdkDropListConnectedTo]="[todoList]"
+    class="example-list"
+    (cdkDropListDropped)="drop($event)">
+    @for (item of done; track item) {
+    <div class="example-box" cdkDrag>{{item}}</div>
+    }
+  </div>
+</div>-->

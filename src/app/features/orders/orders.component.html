@@ -1,0 +1,39 @@
+<div>
+  <br>
+  <div class="container">
+      <div class="center">
+          <button type="button" mat-raised-button color="primary" routerLink="/routes">
+            <mat-icon>add</mat-icon> Assign
+          </button>
+      </div>
+    <br>
+    <div class="container center">
+      <h3>{{title}}</h3>
+
+      @if (isOrdersEmpty()) {
+        <mat-table #table [dataSource]="orders$()">
+          <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef> Product </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.productName}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="price">
+            <mat-header-cell *matHeaderCellDef> Price </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.price | currency}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="location">
+            <mat-header-cell *matHeaderCellDef> Location </mat-header-cell>
+            <mat-cell *matCellDef="let element"> <a [href]="'https://www.google.com/maps/search/?api=1&query=' + element.deliveryLocation.latitude + '%2C' + element.deliveryLocation.longitude" target="_blank">Map</a></mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+      } @else {
+        <mat-progress-spinner
+          color="primary"
+          mode="indeterminate">
+        </mat-progress-spinner>
+      }
+
+      </div>
+  </div>
+</div>
