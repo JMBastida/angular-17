@@ -20,6 +20,6 @@ export class OrdersComponent implements OnInit{
     this.title = this.titleService.getTitle();
   }
 
-  isOrdersEmpty = computed(() => this.orders$().length > 0);
+  isOrdersNotEmpty = computed(() => this.orders$().length > 0);
 
 }

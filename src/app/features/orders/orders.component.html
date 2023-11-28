@@ -10,7 +10,7 @@
     <div class="container center">
       <h3>{{title}}</h3>
 
-      @if (isOrdersEmpty()) {
+      @if (isOrdersNotEmpty()) {
         <mat-table #table [dataSource]="orders$()">
           <ng-container matColumnDef="name">
             <mat-header-cell *matHeaderCellDef> Product </mat-header-cell>
