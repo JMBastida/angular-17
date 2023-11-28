@@ -19,7 +19,7 @@ export class RoutesService {
     );
   }
 
-  updateRoutes(routes: any): Observable<any> {
+  updateRoutes(routes: RoutesModel[]): Observable<any> {
     return this.http.post(`${this.apiBaseUrl}/route-updated`, routes);
   }
 }

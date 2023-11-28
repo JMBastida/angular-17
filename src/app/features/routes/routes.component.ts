@@ -4,11 +4,9 @@ import {RoutesService} from "./routes.service";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {OrderModel} from "../orders/models/order.model";
-import {OrdersService} from "../orders/orders.service";
 import {map, Observable, of, take} from "rxjs";
 import {RidersService} from "../../core/services/riders.service";
 import {ActivatedRoute} from "@angular/router";
-import {RidersModel} from "../../core/models/riders.model";
 
 @Component({
   selector: 'app-routes',

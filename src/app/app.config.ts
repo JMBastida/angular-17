@@ -1,5 +1,5 @@
 import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import {provideRouter, withViewTransitions} from '@angular/router';
 import { routes } from './app.routes';
 import {API_URL, environment} from "../environments/environment";
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -10,7 +10,7 @@ import {RidersService} from "./core/services/riders.service";
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
+    provideRouter(routes, withViewTransitions()),
     {provide: OrdersService},
     {provide: RidersService},
     { provide: API_URL, useValue: environment.apiBaseUrl },

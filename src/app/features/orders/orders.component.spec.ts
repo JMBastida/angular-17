@@ -15,6 +15,7 @@ import {HttpClientTestingModule, HttpTestingController} from "@angular/common/ht
 import {API_URL} from "../../../environments/environment";
 import {OrderModel} from "./models/order.model";
 import {provideRouter, Router} from "@angular/router";
+import {signal} from "@angular/core";
 
 describe('OrdersComponent', () => {
   let component: OrdersComponent;
@@ -24,7 +25,8 @@ describe('OrdersComponent', () => {
 
   beforeEach(waitForAsync(() => {
     ordersServiceStub = {
-      findTomorrowOrders: () => scheduled(of([{productName: "test", price: 17.05, orderId: "1", deliveryLocation: {latitude: 47.5951518,longitude:-122.3316393}}]), asyncScheduler) // Mock the service method to return an observable of an empty array
+      fetchTomorrowOrders: () => scheduled(of([{productName: "test", price: 17.05, orderId: "1", deliveryLocation: {latitude: 47.5951518,longitude:-122.3316393}}]), asyncScheduler), // Mock the service method to return an observable of an empty array
+      ordersSignal: signal<OrderModel[]>([{productName: "test", price: 17.05, orderId: "1", deliveryLocation: {latitude: 47.5951518,longitude:-122.3316393}}])
     };
 
     TestBed.configureTestingModule({
@@ -60,15 +62,16 @@ describe('OrdersComponent', () => {
     component = fixture.debugElement.componentInstance;
     const compiled = fixture.debugElement.nativeElement;
     discardPeriodicTasks();
+
     expect(compiled.querySelector('h3').textContent).toContain('Recent orders');
   }));
 
   it('should fetch orders on ngOnInit', waitForAsync(() => {
-    const spy = spyOn<Partial<OrdersService>, any>(ordersServiceStub,'findTomorrowOrders')
+    const spy = spyOn<Partial<OrdersService>, any>(ordersServiceStub,'fetchTomorrowOrders')
     fixture = TestBed.createComponent(OrdersComponent);
     fixture.detectChanges();
     component = fixture.debugElement.componentInstance;
-    expect(ordersServiceStub.findTomorrowOrders).toHaveBeenCalled();
+    expect(ordersServiceStub.fetchTomorrowOrders).toHaveBeenCalled();
   }));
 
   afterEach(() => {
@@ -80,15 +83,22 @@ describe('OrdersComponent', () => {
 describe('OrdersService', () => {
   let ordersService: OrdersService;
   let httpTestingController: HttpTestingController;
+  const orders: OrderModel[] = [
+    {productName: "test", price: 17.05, orderId: "1", deliveryLocation: {latitude: 47.5951518,longitude:-122.3316393}}
+  ]
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [OrdersService, { provide: API_URL, useValue: 'your_mock_api_url' }]
+      providers: [OrdersService, { provide: API_URL, useValue: 'https://example.com/api' }]
     });
 
     ordersService = TestBed.inject(OrdersService);
     httpTestingController = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpTestingController.verify();
   });
 
   it('should be created', () => {
@@ -96,17 +106,15 @@ describe('OrdersService', () => {
   });
 
   it('should fetch tomorrow orders', () => {
-    const mockOrders: OrderModel[] = [{productName: "test", price: 17.05, orderId: "1", deliveryLocation: {latitude: 47.5951518,longitude:-122.3316393}}];
 
-    ordersService.findTomorrowOrders().subscribe(orders => {
-      expect(orders).toEqual(mockOrders);
-    });
+    ordersService.fetchTomorrowOrders();
 
-    const req = httpTestingController.expectOne('your_mock_api_url/orders');
-    expect(req.request.method).toEqual('GET');
+    const req = httpTestingController.expectOne('https://example.com/api/orders');
+    expect(req.request.method).toBe('GET');
 
-    req.flush(mockOrders);
-    httpTestingController.verify();
+    req.flush(orders);
+
+    expect(ordersService.ordersSignal()).toEqual(orders);
   });
 
 });
